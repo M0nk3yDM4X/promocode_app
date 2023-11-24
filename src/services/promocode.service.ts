@@ -1,6 +1,6 @@
 import { HttpException } from "../exceptions/HttpException"
 import { IUsePromoCodeUserArgs } from "../interfaces/promocode.interfaces"
-import { PromoCode, PromoCodeModel } from "../models/promocode.model"
+import { PromoCode, PromoCodeModel, PromoCodeRestriction } from "../models/promocode.model"
 
 class PromoCodeService {
     public async create(userData?: Partial<PromoCode>) {
@@ -25,6 +25,11 @@ class PromoCodeService {
 
         return promoCode
     }
+
+    public async validateRestrictionList(
+        restrictions: PromoCodeRestriction[],
+        userArguments?: IUsePromoCodeUserArgs["arguments"]
+    ) {}
 }
 
 export default PromoCodeService
