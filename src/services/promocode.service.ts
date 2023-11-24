@@ -1,5 +1,6 @@
 import { HttpException } from "../exceptions/HttpException"
 import { IUsePromoCodeUserArgs } from "../interfaces/promocode.interfaces"
+import RestrictionValidation from "../libs/RestrictionValidation/restrictionValidation"
 import { PromoCode, PromoCodeModel, PromoCodeRestriction } from "../models/promocode.model"
 
 class PromoCodeService {
@@ -29,7 +30,30 @@ class PromoCodeService {
     public async validateRestrictionList(
         restrictions: PromoCodeRestriction[],
         userArguments?: IUsePromoCodeUserArgs["arguments"]
-    ) {}
+    ) {
+        const restrictionValidation = new RestrictionValidation()
+
+        for (const restriction of restrictions) {
+            let result: boolean = false
+
+            if (restriction.date) {
+                const { before, after } = restriction.date
+                result = restrictionValidation.handleDateRestriction(before, after)
+            }
+
+            if (restriction.age && userArguments?.age) {
+                result = restrictionValidation.handleAgeRestriction(
+                    restriction.age,
+                    userArguments.age
+                )
+            }
+
+            if (result) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 export default PromoCodeService
