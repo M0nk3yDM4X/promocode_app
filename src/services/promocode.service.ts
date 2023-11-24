@@ -55,6 +55,22 @@ class PromoCodeService {
                 )
             }
 
+            if (restriction.or) {
+                result = await restrictionValidation.handleOperatorRestriction(
+                    restriction.or,
+                    "OR",
+                    userArguments
+                )
+            }
+
+            if (restriction.and) {
+                result = await restrictionValidation.handleOperatorRestriction(
+                    restriction.and,
+                    "AND",
+                    userArguments
+                )
+            }
+
             if (result) {
                 return true
             }

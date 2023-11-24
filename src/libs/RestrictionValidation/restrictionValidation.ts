@@ -1,4 +1,9 @@
-import { AgeRestriction, MeteoRestriction } from "../../models/promocode.model"
+import { IUsePromoCodeUserArgs } from "../../interfaces/promocode.interfaces"
+import {
+    AgeRestriction,
+    MeteoRestriction,
+    PromoCodeRestriction
+} from "../../models/promocode.model"
 import Meteo from "../Meteo/meteo"
 
 class RestrictionValidation {
@@ -31,6 +36,30 @@ class RestrictionValidation {
         )
 
         return isWeatherValid && isTempValid
+    }
+
+    public async handleOperatorRestriction(
+        restrictionList: PromoCodeRestriction[],
+        type: "AND" | "OR",
+        userArguments?: IUsePromoCodeUserArgs["arguments"]
+    ): Promise<boolean> {
+        const resultList = await this.reduceLogicalOperatorRestriction(
+            restrictionList,
+            userArguments
+        )
+
+        if (type === "AND") {
+            return resultList.length === 0 ? false : resultList.every((result) => result === true)
+        }
+
+        return resultList.some((result) => result === true)
+    }
+
+    private async reduceLogicalOperatorRestriction(
+        restrictionList: PromoCodeRestriction[],
+        userArguments?: IUsePromoCodeUserArgs["arguments"]
+    ) {
+        return []
     }
 
     private compareNumericValueToRestrictionNumeric(
