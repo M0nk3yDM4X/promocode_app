@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import { PromoCode } from "../models/promocode.model"
 import PromoCodeService from "../services/promocode.service"
 import { IUsePromoCodeUserArgs } from "../interfaces/promocode.interfaces"
+import { HttpException } from "../exceptions/HttpException"
 
 class PromoCodeController {
     private promoCodeService = new PromoCodeService()
@@ -30,6 +31,21 @@ class PromoCodeController {
                     avantage
                 })
             }
+
+            const isDateRestriction = restrictions.some((restriction) => restriction.date)
+            const userArguments = userData?.arguments
+
+            if (!userArguments && isDateRestriction) {
+                throw new HttpException(
+                    400,
+                    "Promocode have restrictions, and you didn't provide arguments"
+                )
+            }
+
+            const isRestrictionListValidated = await this.promoCodeService.validateRestrictionList(
+                restrictions,
+                userArguments
+            )
         } catch (error) {
             next(error)
         }
