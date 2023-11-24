@@ -32,15 +32,7 @@ class PromoCodeController {
                 })
             }
 
-            const isDateRestriction = restrictions.some((restriction) => restriction.date)
             const userArguments = userData?.arguments
-
-            if (!userArguments && isDateRestriction) {
-                throw new HttpException(
-                    400,
-                    "Promocode have restrictions, and you didn't provide arguments"
-                )
-            }
 
             const isRestrictionListValidated = await this.promoCodeService.validateRestrictionList(
                 restrictions,
