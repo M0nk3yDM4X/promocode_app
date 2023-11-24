@@ -46,6 +46,19 @@ class PromoCodeController {
                 restrictions,
                 userArguments
             )
+
+            if (!isRestrictionListValidated) {
+                return response.status(400).json({
+                    promocode_name: name,
+                    status: "denied"
+                })
+            }
+
+            return response.status(201).json({
+                promocode_name: name,
+                status: "accepted",
+                avantage
+            })
         } catch (error) {
             next(error)
         }

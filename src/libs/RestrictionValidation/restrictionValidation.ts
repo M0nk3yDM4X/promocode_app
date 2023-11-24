@@ -59,7 +59,34 @@ class RestrictionValidation {
         restrictionList: PromoCodeRestriction[],
         userArguments?: IUsePromoCodeUserArgs["arguments"]
     ) {
-        return []
+        const result = await Promise.all(
+            restrictionList.map(async (restriction) => {
+                if (restriction.date) {
+                    const { before, after } = restriction.date
+                    return this.handleDateRestriction(before, after)
+                }
+
+                if (restriction.age && userArguments?.age) {
+                    return this.handleAgeRestriction(restriction.age, userArguments.age)
+                }
+
+                if (restriction.meteo && userArguments?.meteo) {
+                    return this.handleMeteoRestriction(restriction.meteo, userArguments.meteo.town)
+                }
+
+                if (restriction.or) {
+                    return this.handleOperatorRestriction(restriction.or, "OR", userArguments)
+                }
+
+                if (restriction.and) {
+                    return this.handleOperatorRestriction(restriction.and, "AND", userArguments)
+                }
+
+                return false
+            })
+        )
+
+        return result
     }
 
     private compareNumericValueToRestrictionNumeric(
