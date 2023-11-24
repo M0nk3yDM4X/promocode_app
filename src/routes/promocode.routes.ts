@@ -13,6 +13,7 @@ class PromoCodeRoute implements Routes {
 
     private initializePromoCodeRoutes() {
         this.router.post(`${this.path}/create`, this.promoCodeController.createPromoCode)
+        this.router.post(`${this.path}/use`, this.promoCodeController.usePromoCode)
     }
 }
 

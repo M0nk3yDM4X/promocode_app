@@ -1,4 +1,5 @@
 import { HttpException } from "../exceptions/HttpException"
+import { IUsePromoCodeUserArgs } from "../interfaces/promocode.interfaces"
 import { PromoCode, PromoCodeModel } from "../models/promocode.model"
 
 class PromoCodeService {
@@ -9,6 +10,20 @@ class PromoCodeService {
         const promoCode = new PromoCodeModel(userData)
         const createdPromoCode = await promoCode.save()
         return createdPromoCode
+    }
+
+    public async findByName(userData?: IUsePromoCodeUserArgs) {
+        if (!userData?.name) {
+            throw new HttpException(409, "Couldn't find promocode, as promocode name is missing")
+        }
+
+        const promoCode = await PromoCodeModel.findOne({ name: userData.name })
+
+        if (!promoCode) {
+            throw new HttpException(409, "Promo code doesn't exist")
+        }
+
+        return promoCode
     }
 }
 
