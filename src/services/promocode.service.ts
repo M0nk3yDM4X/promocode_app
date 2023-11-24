@@ -41,6 +41,13 @@ class PromoCodeService {
                 result = restrictionValidation.handleDateRestriction(before, after)
             }
 
+            if (restriction.meteo && userArguments?.meteo) {
+                result = await restrictionValidation.handleMeteoRestriction(
+                    restriction.meteo,
+                    userArguments.meteo.town
+                )
+            }
+
             if (restriction.age && userArguments?.age) {
                 result = restrictionValidation.handleAgeRestriction(
                     restriction.age,

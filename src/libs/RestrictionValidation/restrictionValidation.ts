@@ -1,6 +1,9 @@
 import { AgeRestriction, MeteoRestriction } from "../../models/promocode.model"
+import Meteo from "../Meteo/meteo"
 
 class RestrictionValidation {
+    public meteo = new Meteo()
+
     public handleAgeRestriction(ageRestriction: AgeRestriction, age: number) {
         const isAgeValid = this.compareNumericValueToRestrictionNumeric(age, ageRestriction)
         return isAgeValid
@@ -12,6 +15,22 @@ class RestrictionValidation {
         const today = Date.now()
 
         return today >= afterTimestamp && today <= beforeTimestamp
+    }
+
+    public async handleMeteoRestriction(meteoRestriction: MeteoRestriction, town: string) {
+        const cityMeteo = await this.meteo.getCityMeteo(town)
+
+        if (!cityMeteo) {
+            return false
+        }
+
+        const isWeatherValid = meteoRestriction.is === cityMeteo.mainWeather
+        const isTempValid = this.compareNumericValueToRestrictionNumeric(
+            cityMeteo.temp,
+            meteoRestriction.temp
+        )
+
+        return isWeatherValid && isTempValid
     }
 
     private compareNumericValueToRestrictionNumeric(
